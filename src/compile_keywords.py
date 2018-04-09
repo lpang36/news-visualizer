@@ -3,6 +3,7 @@ import requests
 import os.path
 import pickle
 import re
+from copy import copy
 
 import nltk
 from nltk.tag import pos_tag, StanfordNERTagger
@@ -41,9 +42,10 @@ def compile_keywords():
       targets.append(line.replace('\n',''))
   with open('../data/blacklist.txt','r') as f:
     for line in f:
-      blacklist.append(line)
+      blacklist.append(line.replace('\n',''))
   
-  terms = {a[1]:a[0] for a in filter(lambda x: x[0]>=5,[(terms[i],i) for i in terms])}
+  terms = {a[1]:a[0] for a in filter(lambda x: x[0]>=10,[(terms[i],i) for i in terms])}
+  temp = copy(terms)
   
   def merge(D,K,T):
     if T in D:
@@ -57,25 +59,39 @@ def compile_keywords():
     if len(t)>4 and (t[-1]=='n' or t[-1]=='s'):
       for i in range(1,4):
         if t[:-i] in terms:
-          merge(terms,t,t[:-i])
+          merge(temp,t,t[:-i])
           break
+  terms = temp
+  temp = copy(terms)
   
   #check blacklist
   for t in terms:
     if t in blacklist:
-      del terms[t]
+      del temp[t]
+  terms = temp
+  temp = copy(terms)
       
   #check names
-  for t in terms:
-    for 
+  terms = sorted([(terms[i],i) for i in terms],reverse=True)
+  for _,t in terms:
+    if len(t.split(' '))==1:
+      for _,s in terms:
+        if t!=s and len(s)>len(t) and s.rfind(t)==len(s)-len(t):
+          merge(temp,t,s)
+          break
+  terms = temp
+  temp = copy(terms)
   
   #check exception list
   for t in terms:
     for i,e in enumerate(exceptions):
       if t in e:
-        merge(terms,t,targets[i])
+        merge(temp,t,targets[i])
         break
+  terms = temp
         
-  print [x[1] for x in sorted(filter(lambda x: x[0]>=5,[(terms[i],i) for i in terms]),reverse=True)]
+  kws = sorted([(terms[i],i) for i in terms],reverse=True)
+  with open('../data/keywords.pkl','wb') as f:
+    pickle.dump(kws,f)
 
 compile_keywords()
