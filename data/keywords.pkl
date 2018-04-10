@@ -1,0 +1,242 @@
+(lp0
+(lp1
+I582
+aS'donald trump'
+p2
+aa(lp3
+I352
+aS'syria'
+p4
+aa(lp5
+I262
+aS'united states'
+p6
+aa(lp7
+I182
+aS'damascus'
+p8
+aa(lp9
+I142
+aS'north korea'
+p10
+aa(lp11
+I92
+aS'ap'
+p12
+aa(lp13
+I80
+aS'kim jong un'
+p14
+aa(lp15
+I80
+aS'jimmy kimmel'
+p16
+aa(lp17
+I78
+aS'russia'
+p18
+aa(lp19
+I77
+aS'cambridge analytica'
+p20
+aa(lp21
+I76
+aS'washington'
+p22
+aa(lp23
+I75
+aS'sean hannity'
+p24
+aa(lp25
+I74
+aS'china'
+p26
+aa(lp27
+I72
+aS'facebook'
+p28
+aa(lp29
+I70
+aS'white house'
+p30
+aa(lp31
+I61
+aS'trump tower'
+p32
+aa(lp33
+I50
+aS'fox news'
+p34
+aa(lp35
+I46
+aS'new york'
+p36
+aa(lp37
+I43
+aS'melania trump'
+p38
+aa(lp39
+I43
+aS'korean'
+p40
+aa(lp41
+I41
+aS'stormy daniels'
+p42
+aa(lp43
+I40
+aS'congress'
+p44
+aa(lp45
+I39
+aS'douma'
+p46
+aa(lp47
+I35
+aS'republican party'
+p48
+aa(lp49
+I34
+aS'bashar assad'
+p50
+aa(lp51
+I33
+aS'vladimir putin'
+p52
+aa(lp53
+I29
+aS'iran'
+p54
+aa(lp55
+I25
+aS'scott pruitt'
+p56
+aa(lp57
+I25
+aS'mexico'
+p58
+aa(lp59
+I25
+aS'asia'
+p60
+aa(lp61
+I23
+aS'agence france'
+p62
+aa(lp63
+I22
+aS'korean peninsula'
+p64
+aa(lp65
+I20
+aS'washington post'
+p66
+aa(lp67
+I20
+aS'mccain'
+p68
+aa(lp69
+I20
+aS'kim'
+p70
+aa(lp71
+I20
+aS'epa'
+p72
+aa(lp73
+I20
+aS'arizona'
+p74
+aa(lp75
+I19
+aS'mark zuckerberg'
+p76
+aa(lp77
+I18
+aS'homs'
+p78
+aa(lp79
+I17
+aS'amazon'
+p80
+aa(lp81
+I16
+aS'new york times'
+p82
+aa(lp83
+I16
+aS'michael anton'
+p84
+aa(lp85
+I16
+aS'chemical'
+p86
+aa(lp87
+I16
+aS'canada'
+p88
+aa(lp89
+I15
+aS'national security council'
+p90
+aa(lp91
+I15
+aS'nafta'
+p92
+aa(lp93
+I15
+aS'capitol hill'
+p94
+aa(lp95
+I14
+aS'andy warhol'
+p96
+aa(lp97
+I13
+aS'new york city'
+p98
+aa(lp99
+I12
+aS'reuters'
+p100
+aa(lp101
+I12
+aS'bashar'
+p102
+aa(lp103
+I11
+aS'viktor orban'
+p104
+aa(lp105
+I11
+aS'obama'
+p106
+aa(lp107
+I11
+aS'click'
+p108
+aa(lp109
+I10
+aS'oil'
+p110
+aa(lp111
+I10
+aS'macron'
+p112
+aa(lp113
+I10
+aS'lima'
+p114
+aa(lp115
+I10
+aS'israeli'
+p116
+aa(lp117
+I10
+aS'hungary'
+p118
+aa(lp119
+I10
+aS'beirut'
+p120
+aa.

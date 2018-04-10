@@ -46,20 +46,24 @@ def compile_keywords():
   
   terms = {a[1]:a[0] for a in filter(lambda x: x[0]>=10,[(terms[i],i) for i in terms])}
   temp = copy(terms)
+  aliases = {a:[] for a in terms}
   
-  def merge(D,K,T):
+  def merge(D,K,T,A):
     if T in D:
       D[T]+=D[K]
+      A[T].extend(A[K])
     else:
       D[T] = D[K]
+      A[T] = copy(A[K])
     del D[K]
+    del A[K]
   
   #check common endings
   for t in terms:
     if len(t)>4 and (t[-1]=='n' or t[-1]=='s'):
       for i in range(1,4):
         if t[:-i] in terms:
-          merge(temp,t,t[:-i])
+          merge(temp,t,t[:-i],aliases)
           break
   terms = temp
   temp = copy(terms)
@@ -77,7 +81,7 @@ def compile_keywords():
     if len(t.split(' '))==1:
       for _,s in terms:
         if t!=s and len(s)>len(t) and s.rfind(t)==len(s)-len(t):
-          merge(temp,t,s)
+          merge(temp,t,s,aliases)
           break
   terms = temp
   temp = copy(terms)
@@ -86,11 +90,11 @@ def compile_keywords():
   for t in terms:
     for i,e in enumerate(exceptions):
       if t in e:
-        merge(temp,t,targets[i])
+        merge(temp,t,targets[i],aliases)
         break
   terms = temp
         
-  kws = sorted([(terms[i],i) for i in terms],reverse=True)
+  kws = sorted([[terms[i],i]+aliases[i] for i in terms],reverse=True)
   with open('../data/keywords.pkl','wb') as f:
     pickle.dump(kws,f)
 
