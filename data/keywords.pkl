@@ -20,12 +20,12 @@ I142
 aS'north korea'
 p10
 aa(lp11
-I92
-aS'ap'
+I100
+aS'kim jong un'
 p12
 aa(lp13
-I80
-aS'kim jong un'
+I92
+aS'ap'
 p14
 aa(lp15
 I80
@@ -72,32 +72,32 @@ I46
 aS'new york'
 p36
 aa(lp37
-I43
-aS'melania trump'
+I46
+aS'bashar assad'
 p38
 aa(lp39
 I43
-aS'korean'
+aS'melania trump'
 p40
 aa(lp41
-I41
-aS'stormy daniels'
+I43
+aS'korean'
 p42
 aa(lp43
-I40
-aS'congress'
+I41
+aS'stormy daniels'
 p44
 aa(lp45
-I39
-aS'douma'
+I40
+aS'congress'
 p46
 aa(lp47
-I35
-aS'republican party'
+I39
+aS'douma'
 p48
 aa(lp49
-I34
-aS'bashar assad'
+I35
+aS'republican party'
 p50
 aa(lp51
 I33
@@ -137,106 +137,98 @@ aS'mccain'
 p68
 aa(lp69
 I20
-aS'kim'
+aS'epa'
 p70
 aa(lp71
 I20
-aS'epa'
+aS'arizona'
 p72
 aa(lp73
-I20
-aS'arizona'
-p74
-aa(lp75
 I19
 aS'mark zuckerberg'
-p76
-aa(lp77
+p74
+aa(lp75
 I18
 aS'homs'
-p78
-aa(lp79
+p76
+aa(lp77
 I17
 aS'amazon'
+p78
+aa(lp79
+I16
+aS'new york times'
 p80
 aa(lp81
 I16
-aS'new york times'
+aS'michael anton'
 p82
 aa(lp83
 I16
-aS'michael anton'
+aS'chemical'
 p84
 aa(lp85
 I16
-aS'chemical'
+aS'canada'
 p86
 aa(lp87
-I16
-aS'canada'
+I15
+aS'national security council'
 p88
 aa(lp89
 I15
-aS'national security council'
+aS'nafta'
 p90
 aa(lp91
 I15
-aS'nafta'
+aS'capitol hill'
 p92
 aa(lp93
-I15
-aS'capitol hill'
-p94
-aa(lp95
 I14
 aS'andy warhol'
-p96
-aa(lp97
+p94
+aa(lp95
 I13
 aS'new york city'
-p98
-aa(lp99
+p96
+aa(lp97
 I12
 aS'reuters'
+p98
+aa(lp99
+I11
+aS'viktor orban'
 p100
 aa(lp101
-I12
-aS'bashar'
+I11
+aS'obama'
 p102
 aa(lp103
 I11
-aS'viktor orban'
+aS'click'
 p104
 aa(lp105
-I11
-aS'obama'
+I10
+aS'oil'
 p106
 aa(lp107
-I11
-aS'click'
+I10
+aS'macron'
 p108
 aa(lp109
 I10
-aS'oil'
+aS'lima'
 p110
 aa(lp111
 I10
-aS'macron'
+aS'israeli'
 p112
 aa(lp113
 I10
-aS'lima'
+aS'hungary'
 p114
 aa(lp115
 I10
-aS'israeli'
-p116
-aa(lp117
-I10
-aS'hungary'
-p118
-aa(lp119
-I10
 aS'beirut'
-p120
+p116
 aa.
