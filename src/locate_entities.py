@@ -34,6 +34,8 @@ def locate_entities():
           row.append(kws_table[k])
     if len(row)>1:      
       data.append(row)
+  with open('../data/entitydata.pkl','wb') as f:
+    pickle.dump(data,f)
   
   def generate_batch(n,dat):
     temp = random.sample(dat,n)
@@ -105,20 +107,8 @@ def locate_entities():
   two_d_embeddings = tsne.fit_transform(final_embeddings)
   
   with open('../data/allembed.pkl','wb') as f:
-    pickle.dump(final_embeddings,f)
+    pickle.dump(final_embeddings.tolist(),f)
   with open('../data/2dembed.pkl','wb') as f:
-    pickle.dump(two_d_embeddings,f)
-
-  def plot(embeddings, labels):
-    assert embeddings.shape[0] >= len(labels), 'More labels than embeddings'
-    pylab.figure(figsize=(15,15))	# in inches
-    for i, label in enumerate(labels):
-      x, y = embeddings[i,:]
-      pylab.scatter(x, y)
-      pylab.annotate(label, xy=(x, y), xytext=(5, 2), textcoords='offset points',
-                     ha='right', va='bottom')
-    pylab.show()
-
-  plot(two_d_embeddings, [a[1] for a in kws])
+    pickle.dump(two_d_embeddings.tolist(),f)
 
 locate_entities()
