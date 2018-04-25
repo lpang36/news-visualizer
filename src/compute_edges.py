@@ -37,6 +37,8 @@ def compute_edges(target):
           edges[(temp[i],temp[j])]+=1
         else:
           edges[(temp[i],temp[j])] = 1
+  with open('../data/edges.pkl','wb') as f:
+    pickle.dump(edges,f)
   
   def plot(embeddings, labels, edges, keywords):
     assert len(embeddings) >= len(labels), 'More labels than embeddings'
@@ -53,4 +55,4 @@ def compute_edges(target):
 
   plot(embed, [a[1] for a in kws], edges, kws)
   
-compute_edges("donald trump")
+compute_edges('donald trump')
