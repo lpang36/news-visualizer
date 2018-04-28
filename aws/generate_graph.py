@@ -7,6 +7,7 @@ def generate_graph(event,context):
   #import nltk
   from nltk import pos_tag,ne_chunk,word_tokenize
   from nltk.data import load
+  from nltk.corpus import words
   
   #if 'LAMBDA_TASK_ROOT' in os.environ:
   #  nltk.data.path.append(os.environ['LAMBDA_TASK_ROOT']+'nltk_data')
@@ -28,7 +29,7 @@ def generate_graph(event,context):
       if article[u'publishedAt'] is None:
         article[u'publishedAt'] = ''
       articles.append((article[u'title'].encode('ascii','ignore'),article[u'description'].encode('ascii','ignore'),article[u'publishedAt'].encode('ascii','ignore')))
-
+      
   # First, the punkt tokenizer divides our text in sentences.
   # Each sentence is then tokenized and POS tagged.
   #
@@ -68,6 +69,7 @@ def generate_graph(event,context):
   exceptions = []
   targets = []
   blacklist = []
+  word_names = []
   with open('./data/exceptions.txt','r') as f:
     for line in f:
       temp = []
@@ -80,6 +82,9 @@ def generate_graph(event,context):
   with open('./data/blacklist.txt','r') as f:
     for line in f:
       blacklist.append(line.replace('\n',''))
+  with open('./data/words.txt','r') as f:
+    for line in f:
+      word_names.append(line.replace('\n',''))
   
   terms = {a[1]:a[0] for a in filter(lambda x: x[0]>=10,[(terms[i],i) for i in terms])}
   temp = copy(terms)
@@ -129,6 +134,13 @@ def generate_graph(event,context):
       if t in e:
         merge(temp,t,targets[i],aliases)
         break
+  terms = temp
+  temp = copy(terms)
+  
+  #check common words
+  for t in terms:
+    if len(t)<5 and t not in word_names and t in words.words():
+      del temp[t]
   terms = temp
         
   kws = sorted([[terms[i],i]+aliases[i] for i in terms],reverse=True)
@@ -183,3 +195,5 @@ def generate_graph(event,context):
     
   #with open('./temp/graph.json','wb') as f:
   #  json.dump(data,f)
+  
+generate_graph({'q':'trump'},None)
