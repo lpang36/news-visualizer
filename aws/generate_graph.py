@@ -1,11 +1,16 @@
-import requests
-import re
-import json
-from copy import copy
-from nltk import pos_tag,ne_chunk,word_tokenize
-from nltk.data import load
-
 def generate_graph(event,context):
+  import requests
+  import re
+  import json
+  import os
+  from copy import copy
+  #import nltk
+  from nltk import pos_tag,ne_chunk,word_tokenize
+  from nltk.data import load
+  
+  #if 'LAMBDA_TASK_ROOT' in os.environ:
+  #  nltk.data.path.append(os.environ['LAMBDA_TASK_ROOT']+'nltk_data')
+
   ### extract keywords ###
   key = ''
   with open('./data/key.txt',"r") as file:
@@ -40,7 +45,7 @@ def generate_graph(event,context):
   recompute_tags = False
   tags = []
 
-  sent_detector = load('file:./data/english.pickle')
+  sent_detector = load('file:./nltk_data/tokenizers/punkt/english.pickle')
   for title,description,_ in articles:
     tags.append(proper_noun_tag(title))
     for sentence in sent_detector.tokenize(description):
@@ -174,7 +179,7 @@ def generate_graph(event,context):
       'value': edges[edge]
     })
     
-  with open('./temp/graph.json','wb') as f:
-    json.dump(data,f)
+  return data
     
-generate_graph({'q':'trump'},None)
+  #with open('./temp/graph.json','wb') as f:
+  #  json.dump(data,f)
