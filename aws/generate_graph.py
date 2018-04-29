@@ -157,7 +157,8 @@ def generate_graph(event,context):
       kws_table[w] = i  
   
   data = []
-  for a in articles:
+  inds = []
+  for i,a in enumerate(articles):
     title,description = a['title'],a['description']
     row = []
     for k in kws_table:
@@ -167,6 +168,7 @@ def generate_graph(event,context):
           row.append(kws_table[k])
     if len(row)>1:      
       data.append(row)
+      inds.append(i)
   
   ### compute edges ###
   edges = {}
@@ -183,7 +185,7 @@ def generate_graph(event,context):
   node_articles = [[] for i in range(len(kws))]
   for i,row in enumerate(data):
     for item in row:
-      node_articles[item].append({'title':articles[i]['title'],'time':articles[i]['time'],'url':articles[i]['url']})
+      node_articles[item].append({'title':articles[inds[i]]['title'],'time':articles[inds[i]]['time'],'url':articles[inds[i]]['url']})
   
   ### output json ###
   output = {} #beware of duplicate name
