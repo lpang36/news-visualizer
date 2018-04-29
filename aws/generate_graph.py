@@ -91,7 +91,7 @@ def generate_graph(event,context):
     for line in f:
       word_names.append(line.replace('\n',''))
   
-  terms = {a[1]:a[0] for a in filter(lambda x: x[0]>=10,[(terms[i],i) for i in terms])}
+  terms = {a[1]:a[0] for a in filter(lambda x: x[0]>=5,[(terms[i],i) for i in terms])}
   temp = copy(terms)
   aliases = {a:[] for a in terms}
   
@@ -183,7 +183,7 @@ def generate_graph(event,context):
   node_articles = [[] for i in range(len(kws))]
   for i,row in enumerate(data):
     for item in row:
-      node_articles[item].append(articles[i])
+      node_articles[item].append({'title':articles[i]['title'],'time':articles[i]['time'],'url':articles[i]['url']})
   
   ### output json ###
   output = {} #beware of duplicate name
