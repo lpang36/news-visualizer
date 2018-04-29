@@ -18,7 +18,9 @@ def generate_graph(event,context):
     key = file.read().replace('\n','')
       
   articles = []
-  for i in range(1,26):
+  for i in range(1,26):    
+  #with open('./temp/graph.json','wb') as f:
+  #  json.dump(output,f)
     url = 'https://newsapi.org/v2/everything?q='+event['q']+'&language=en&sortBy=publishedAt&apiKey='+key+'&pageSize=100&page='+str(i)
     r = requests.get(url)
     for article in r.json()[u'articles']:
@@ -28,7 +30,9 @@ def generate_graph(event,context):
         article[u'description'] = ''
       if article[u'publishedAt'] is None:
         article[u'publishedAt'] = ''
-      articles.append((article[u'title'].encode('ascii','ignore'),article[u'description'].encode('ascii','ignore'),article[u'publishedAt'].encode('ascii','ignore')))
+      if article[u'url'] is None:
+        article[u'url'] = ''
+      articles.append({'title':article[u'title'].encode('ascii','ignore'),'description':article[u'description'].encode('ascii','ignore'),'time':article[u'publishedAt'].encode('ascii','ignore'),'url':article[u'url'].encode('ascii','ignore')})
       
   # First, the punkt tokenizer divides our text in sentences.
   # Each sentence is then tokenized and POS tagged.
@@ -47,7 +51,8 @@ def generate_graph(event,context):
   tags = []
 
   sent_detector = load('file:./nltk_data/tokenizers/punkt/english.pickle')
-  for title,description,_ in articles:
+  for a in articles:
+    title,description = a['title'],a['description']
     tags.append(proper_noun_tag(title))
     for sentence in sent_detector.tokenize(description):
       tags.append(proper_noun_tag(sentence))
@@ -152,7 +157,8 @@ def generate_graph(event,context):
       kws_table[w] = i  
   
   data = []
-  for title,description,_ in articles:
+  for a in articles:
+    title,description = a['title'],a['description']
     row = []
     for k in kws_table:
       temp = (title+description).lower()
@@ -172,28 +178,35 @@ def generate_graph(event,context):
           edges[(temp[i],temp[j])]+=1
         else:
           edges[(temp[i],temp[j])] = 1
+          
+  ### assign articles ###
+  node_articles = [[] for i in range(len(kws))]
+  for i,row in enumerate(data):
+    for item in row:
+      node_articles[item].append(articles[i])
   
   ### output json ###
-  data = {} #beware of duplicate name
-  data['nodes'] = []
-  data['edges'] = []
+  output = {} #beware of duplicate name
+  output['nodes'] = []
+  output['edges'] = []
   for name in kws_table:
-    data['nodes'].append({
+    output['nodes'].append({
       'id': name,
       'label': name,
-      'size': kws[kws_table[name]][0]
+      'size': kws[kws_table[name]][0],
+      'articles': node_articles[kws_table[name]]
     })
   for i,edge in enumerate(edges):
-    data['edges'].append({
+    output['edges'].append({
       'id': 'e'+str(i),
       'source': kws[edge[0]][1],
       'target': kws[edge[1]][1],
       'value': edges[edge]
     })
     
-  return data
-    
   #with open('./temp/graph.json','wb') as f:
-  #  json.dump(data,f)
+  #  json.dump(output,f)
+  
+  return output
   
 generate_graph({'q':'trump'},None)
