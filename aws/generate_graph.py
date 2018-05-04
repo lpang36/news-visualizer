@@ -130,6 +130,9 @@ def generate_graph(event,context):
         if t!=s and len(s)>len(t) and s.rfind(t)==len(s)-len(t):
           merge(temp,t,s,aliases)
           break
+        elif t!=s and len(s.split(' '))==2 and s.split(' ')[0]==t:
+          merge(temp,t,s,aliases)
+          break
   terms = temp
   temp = copy(terms)
   
