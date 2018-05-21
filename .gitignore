@@ -1,6 +1,6 @@
 *.txt
 *.zip
-aws/lib/
-aws/numpy/
-aws/nltk/
-aws/nltk_data/
+aws/write-lambda/lib/
+aws/write-lambda/numpy/
+aws/write-lambda/nltk/
+aws/write-lambda/nltk_data/
