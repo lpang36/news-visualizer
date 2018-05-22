@@ -10,9 +10,10 @@ def read(event,context):
   ### compute edges ###
   edges = {}
   nodes = {}
+  event['q'] = event['q'].lower()
   #sentiments = {}
   for a in articles:
-    if event['q'] in a['title'] or event['q'] in a['description']: #needs refining
+    if event['q'] in a['title'].lower() or event['q'] in a['description'].lower(): #needs refining
       temp = sorted(a['keywords'])
       for i in range(len(temp)):
         for j in range(i+1,len(temp)):

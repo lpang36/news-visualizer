@@ -70,7 +70,7 @@ def write(event,context):
     tags.append(proper_noun_tag(title))
     for sentence in sent_detector.tokenize(description):
       tags.append(proper_noun_tag(sentence))
-  print 'done sentence tagging'
+  #print 'done sentence tagging'
   
   terms = load_from('terms.txt')
   new_terms = {}

@@ -1,7 +1,9 @@
 import ast
 
 def load_from(filename):
-  return ast.literal_eval('[]')
+  with open(filename,'r') as file:
+    return ast.literal_eval(file.read())
 
 def save_to(data,filename):
-  return
+  with open(filename,'w') as file:
+    file.write(str(data))
