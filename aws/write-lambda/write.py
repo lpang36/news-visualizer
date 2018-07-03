@@ -1,18 +1,38 @@
+import requests
+import re
+import json
+import os
+import time
+import datetime
+from copy import deepcopy
+#import nltk
+from nltk import pos_tag,ne_chunk,word_tokenize
+from nltk.data import load
+from nltk.corpus import words
+#from textblob import TextBlob as tb
+from elasticsearch import Elasticsearch,RequestsHttpConnection,helpers
+from ast import literal_eval
+from s3_interface import load_from_s3 as load_from,save_to_s3 as save_to
+
+BONSAI_URL = 'https://ezq74z6t3a:gc0wwgwdvp@news-visualizer-2976423464.us-east-1.bonsaisearch.net'
+ITEMS_PER_DOC = 4
+
+def connectES(esEndPoint):
+  print ('Connecting to the ES Endpoint {0}'.format(esEndPoint))
+  try:
+    esClient = Elasticsearch(
+    hosts=[{'host': esEndPoint, 'port': 443}],
+    use_ssl=True,
+    verify_certs=True,
+    connection_class=RequestsHttpConnection)
+    return esClient
+  except Exception as E:
+    print("Unable to connect to {0}".format(esEndPoint))
+    print(E)
+    exit(3)
+es = connectES(BONSAI_URL)
+
 def write(event,context):
-  import requests
-  import re
-  import json
-  import os
-  import time
-  import datetime
-  from copy import deepcopy
-  #import nltk
-  from nltk import pos_tag,ne_chunk,word_tokenize
-  from nltk.data import load
-  from nltk.corpus import words
-  #from textblob import TextBlob as tb
-  from s3_interface import load_from,save_to
-  
   #if 'LAMBDA_TASK_ROOT' in os.environ:
   #  nltk.data.path.append(os.environ['LAMBDA_TASK_ROOT']+'nltk_data')
 
@@ -210,8 +230,6 @@ def write(event,context):
   terms = [t for t in temp if t]
   term_to_ind = make_reverse(terms)  
   
-  existing_articles = load_from('articles.txt')
-  
   for i,a in enumerate(articles):
     title,description = a['title'],a['description']
     temp = (title+description).lower()
@@ -220,32 +238,65 @@ def write(event,context):
       if ' '+k in temp or k+' ' in temp:
         row.add(terms[term_to_ind[k]][0][0])
     a['keywords'] = list(row)
-  existing_articles.extend(articles)
+    
+  #index new articles to elasticsearch
+  new_articles = []
+  for i in range(len(articles),4):
+    docs = {}
+    for j in range(ITEMS_PER_DOC):
+      for key in articles[i+j]:
+        docs[key+'_'+str(j)] = str(articles[i+j][key])
+    docs['doc_time'] = str(articles[i]['time'])
+    new_articles.append({
+      '_index':'news-visualizer',
+      '_type':'article',
+      '_op_type':'index',
+      'doc': docs
+    })
+  helpers.bulk(es,new_articles)
   
-  #delete old articles and update keywords
+  #delete old articles
+  week_ago = datetime.datetime.strftime(time.time()-7*24*60*60,'%Y-%m-%dT%H:%M:%SZ')
+  delete_query = {
+    'query': {
+      'term': {
+        'doc_time': {
+          'lt':week_ago
+        }
+      }
+    }
+  }
+  es.delete_by_query(index='news-visualizer',doc_type='article',body=delete_query,size=10000)
+  
+  #update keywords
   needs_updating = {}
   for i,_ in terms:
     for term in i[1:]:
       needs_updating[term] = i[0]
   
+  existing_articles = es.search(index='news-visualizer',doc_type='article',body={'query':{'match_all':{}}},size=10000)['hits']['hits']
   ctr = 0
-  flag = True
-  week_ago = time.time()-7*24*60*60
+  updated_articles = []
   for a in existing_articles:
-    if flag:
-      utc_dt = datetime.datetime.strptime(a['time'],'%Y-%m-%dT%H:%M:%SZ')
-      timestamp = (utc_dt - datetime.datetime(1970, 1, 1)).total_seconds()
-      if timestamp<week_ago:
-        ctr+=1
-      else:
-        flag = False
-    for i,kw in enumerate(a['keywords']):
-      if kw in needs_updating:
-        a['keywords'][i] = needs_updating[kw]
-      if kw not in term_to_ind:
-        del a['keywords'][i]
-   
-  save_to(terms,'terms.txt')
-  save_to(existing_articles,'articles.txt')
+    article = a['_source']
+    for j in range(ITEMS_PER_DOC):
+      keywords = literal_eval(article['keywords_'+str(j)])
+      for i,kw in keywords:
+        if kw in needs_updating:
+          article['keywords'][i] = needs_updating[kw]
+        if kw not in term_to_ind:
+          del article['keywords'][i]
+      article['keywords_'+str(j)] = str(keywords)
+    updated_articles.append(article)
   
-write({'q':'trump'},None)
+  updated_articles = [{
+    '_index':'news-visualizer',
+    '_type':'article',
+    '_op_type':'update',
+    'doc':a
+  } for a in updated_articles]
+  helpers.bulk(es,updated_articles)
+  
+  save_to(terms,'terms.txt')
+  
+#write({'q':'trump'},None)
