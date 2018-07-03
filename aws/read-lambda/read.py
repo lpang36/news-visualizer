@@ -83,6 +83,14 @@ def read(event,context):
   #with open('./temp/graph.json','wb') as f:
   #  json.dump(output,f)
   
-  return output
+  return {
+    'isBase64Encoded': True,
+      'statusCode': 200,
+      'body': json.dumps(output),
+      'headers': {
+         'Content-Type': 'application/json', 
+         'Access-Control-Allow-Origin': '*' 
+     }
+  }
 
 #read({'q':'trump'},None)

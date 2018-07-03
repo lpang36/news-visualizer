@@ -299,4 +299,14 @@ def write(event,context):
   
   save_to(terms,'terms.txt')
   
+  return {
+    'isBase64Encoded': True,
+      'statusCode': 200,
+      'body': '',
+      'headers': {
+         'Content-Type': 'application/json', 
+         'Access-Control-Allow-Origin': '*' 
+     }
+  }
+  
 #write({'q':'trump'},None)
