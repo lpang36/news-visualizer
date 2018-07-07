@@ -19,7 +19,7 @@ def connectES(esEndPoint):
     exit(3)
 es = connectES(BONSAI_URL)
 
-def read(event,context):  
+def read(event,context,es=es):  
   event['q'] = event['q'].lower()
   should_match  = []
   for i in range(ITEMS_PER_DOC):

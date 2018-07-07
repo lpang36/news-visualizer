@@ -27,7 +27,7 @@ prod_dir = '/home/lpang/Documents/GitHub/news-visualizer/aws/'
 
 while True:
     #reload automatically
-    input_str = input().split(' ')
+    input_str = raw_input().split(' ')
     test,query = input_str[0],' '.join(input_str[1:])
     t1 = time.time()
     result = None
@@ -37,6 +37,8 @@ while True:
         result = test_read(es,query)
     elif test=='2':
         result = test_write(es)
+    elif test=='q':
+        pass
     t2 = time.time()
     print(result)
     print('time elapsed: '+str(t2-t1)+' seconds')

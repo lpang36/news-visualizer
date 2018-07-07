@@ -12,7 +12,11 @@ from nltk.corpus import words
 #from textblob import TextBlob as tb
 from elasticsearch import Elasticsearch,RequestsHttpConnection,helpers
 from ast import literal_eval
-from s3_interface import load_from_s3 as load_from,save_to_s3 as save_to
+try:
+  from s3_interface import load_from_s3 as load_from,save_to_s3 as save_to
+except:
+  load_from = None
+  save_to = None
 
 BONSAI_URL = 'https://ezq74z6t3a:gc0wwgwdvp@news-visualizer-2976423464.us-east-1.bonsaisearch.net'
 ITEMS_PER_DOC = 4
@@ -32,7 +36,7 @@ def connectES(esEndPoint):
     exit(3)
 es = connectES(BONSAI_URL)
 
-def write(event,context):
+def write(event,context,es=es,load_from=load_from,save_to=save_to):
   #if 'LAMBDA_TASK_ROOT' in os.environ:
   #  nltk.data.path.append(os.environ['LAMBDA_TASK_ROOT']+'nltk_data')
 
