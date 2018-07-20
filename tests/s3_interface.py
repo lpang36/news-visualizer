@@ -13,14 +13,14 @@ def save_to_local(data,filename):
 
 def load_from_s3(filename):
   s3 = boto3.resource('s3')
-  BUCKET_NAME = 'news-visualizer-bucket' 
+  BUCKET_NAME = 'my-bucket' 
   KEY = filename
-  obj = s3.Object(BUCKET_NAME,KEY)
+  obj = s3.Object(bucket,key)
   return ast.literal_eval(obj.get()['Body'].read().decode('utf-8'))
   
 def save_to_s3(data,filename):
   s3 = boto3.resource('s3')
-  BUCKET_NAME = 'news-visualizer-bucket' 
+  BUCKET_NAME = 'my-bucket' 
   KEY = filename
-  obj = s3.Object(BUCKET_NAME,KEY)
+  obj = s3.Object(bucket,key)
   obj.put(Body=data)

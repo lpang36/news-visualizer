@@ -10,11 +10,7 @@ ITEMS_PER_DOC = 4
 def connectES(esEndPoint):
   print ('Connecting to the ES Endpoint {0}'.format(esEndPoint))
   try:
-    esClient = Elasticsearch(
-    hosts=[{'host': esEndPoint, 'port': 443}],
-    use_ssl=True,
-    verify_certs=True,
-    connection_class=RequestsHttpConnection)
+    esClient = Elasticsearch(BONSAI_URL)
     return esClient
   except Exception as E:
     print("Unable to connect to {0}".format(esEndPoint))

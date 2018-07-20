@@ -24,7 +24,11 @@ ITEMS_PER_DOC = 4
 def connectES(esEndPoint):
   print ('Connecting to the ES Endpoint {0}'.format(esEndPoint))
   try:
-    esClient = Elasticsearch(BONSAI_URL)
+    esClient = Elasticsearch(
+    hosts=[{'host': esEndPoint, 'port': 443}],
+    use_ssl=True,
+    verify_certs=True,
+    connection_class=RequestsHttpConnection)
     return esClient
   except Exception as E:
     print("Unable to connect to {0}".format(esEndPoint))
@@ -241,7 +245,7 @@ def write(event,context,es=es,load_from=load_from,save_to=save_to):
     
   #index new articles to elasticsearch
   new_articles = []
-  for i in range(0,len(articles),4):
+  for i in range(len(articles),4):
     docs = {}
     for j in range(ITEMS_PER_DOC):
       for key in articles[i+j]:
@@ -256,10 +260,10 @@ def write(event,context,es=es,load_from=load_from,save_to=save_to):
   helpers.bulk(es,new_articles)
   
   #delete old articles
-  week_ago = datetime.datetime.strftime(datetime.datetime.fromtimestamp(time.time()-7*24*60*60),'%Y-%m-%dT%H:%M:%SZ')
+  week_ago = datetime.datetime.strftime(time.time()-7*24*60*60,'%Y-%m-%dT%H:%M:%SZ')
   delete_query = {
     'query': {
-      'range': {
+      'term': {
         'doc_time': {
           'lt':week_ago
         }
@@ -277,18 +281,16 @@ def write(event,context,es=es,load_from=load_from,save_to=save_to):
   existing_articles = es.search(index='news-visualizer',doc_type='article',body={'query':{'match_all':{}}},size=10000)['hits']['hits']
   ctr = 0
   updated_articles = []
-  print(existing_articles)
   for a in existing_articles:
     article = a['_source']
     for j in range(ITEMS_PER_DOC):
-      if 'keywords_'+str(j) in article:
-        keywords = literal_eval(article['keywords_'+str(j)])
-        for i,kw in keywords:
-          if kw in needs_updating:
-            article['keywords'][i] = needs_updating[kw]
-          if kw not in term_to_ind:
-            del article['keywords'][i]
-        article['keywords_'+str(j)] = str(keywords)
+      keywords = literal_eval(article['keywords_'+str(j)])
+      for i,kw in keywords:
+        if kw in needs_updating:
+          article['keywords'][i] = needs_updating[kw]
+        if kw not in term_to_ind:
+          del article['keywords'][i]
+      article['keywords_'+str(j)] = str(keywords)
     updated_articles.append(article)
   
   updated_articles = [{
@@ -299,7 +301,7 @@ def write(event,context,es=es,load_from=load_from,save_to=save_to):
   } for a in updated_articles]
   helpers.bulk(es,updated_articles)
   
-  save_to(str(terms),'terms.txt')
+  save_to(terms,'terms.txt')
   
   return {
     'isBase64Encoded': True,
