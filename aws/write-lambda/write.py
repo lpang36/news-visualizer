@@ -247,12 +247,10 @@ def write(event,context,es=es,load_from=load_from,save_to=save_to):
       for key in articles[i+j]:
         docs[key+'_'+str(j)] = str(articles[i+j][key])
     docs['doc_time'] = str(articles[i]['time'])
-    new_articles.append({
-      '_index':'news-visualizer',
-      '_type':'article',
-      '_op_type':'index',
-      'doc': docs
-    })
+    docs['_index'] = 'news-visualizer'
+    docs['_type'] = 'doc'
+    docs['_op_type'] = 'index'
+    new_articles.append(docs)
   helpers.bulk(es,new_articles)
   
   #delete old articles
@@ -274,10 +272,9 @@ def write(event,context,es=es,load_from=load_from,save_to=save_to):
     for term in i[1:]:
       needs_updating[term] = i[0]
   
-  existing_articles = es.search(index='news-visualizer',doc_type='article',body={'query':{'match_all':{}}},size=10000)['hits']['hits']
+  existing_articles = es.search(index='news-visualizer',doc_type='doc',body={'query':{'match_all':{}}},size=10000)['hits']['hits']
   ctr = 0
   updated_articles = []
-  print(existing_articles)
   for a in existing_articles:
     article = a['_source']
     for j in range(ITEMS_PER_DOC):
@@ -291,12 +288,11 @@ def write(event,context,es=es,load_from=load_from,save_to=save_to):
         article['keywords_'+str(j)] = str(keywords)
     updated_articles.append(article)
   
-  updated_articles = [{
-    '_index':'news-visualizer',
-    '_type':'article',
-    '_op_type':'update',
-    'doc':a
-  } for a in updated_articles]
+  for i,a in enumerate(updated_articles):
+    a['_index'] = 'news-visualizer'
+    a['_type'] = 'doc'
+    a['_op_type'] = 'update'
+    updated_articles[i] = a
   helpers.bulk(es,updated_articles)
   
   save_to(str(terms),'terms.txt')

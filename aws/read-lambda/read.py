@@ -1,5 +1,6 @@
 import json
 from elasticsearch import Elasticsearch,RequestsHttpConnection,helpers
+import ast
 
 BONSAI_URL = 'https://ezq74z6t3a:gc0wwgwdvp@news-visualizer-2976423464.us-east-1.bonsaisearch.net'
 ITEMS_PER_DOC = 4
@@ -35,7 +36,7 @@ def read(event,context,es=es):
       }
     }
   }
-  articles = es.search(index='news-visualizer',doc_type='article',body=query,size=10000)['hits']['hits']
+  articles = es.search(index='news-visualizer',doc_type='doc',body=query,size=10000)['hits']['hits']
   
   def process_article(article,ind):
     return {'title':article['title_'+str(ind)],'time':article['time_'+str(ind)],'url':article['url_'+str(ind)]}
@@ -45,24 +46,25 @@ def read(event,context,es=es):
   nodes = {}
   #sentiments = {}
   for a in articles:
-    matched = [int(num) for num in a['matched_queries']]
-    a = a['_source']
-    for ind in range(ITEMS_PER_DOC):
-      if ind in matched:
-        temp = sorted(ast.literal_eval(a['keywords_'+str(ind)]))
-        for i in range(len(temp)):
-          for j in range(i+1,len(temp)):
-            if (temp[i],temp[j]) in edges:
-              edges[(temp[i],temp[j])]+=1
-              #sentiments[(temp[i],temp[j])]+=articles[inds[k]]['sentiment']
+    if 'matched_queries' in a:
+      matched = [int(num) for num in a['matched_queries']]
+      a = a['_source']
+      for ind in range(ITEMS_PER_DOC):
+        if ind in matched:
+          temp = sorted(ast.literal_eval(a['keywords_'+str(ind)]))
+          for i in range(len(temp)):
+            for j in range(i+1,len(temp)):
+              if (temp[i],temp[j]) in edges:
+                edges[(temp[i],temp[j])]+=1
+                #sentiments[(temp[i],temp[j])]+=articles[inds[k]]['sentiment']
+              else:
+                edges[(temp[i],temp[j])] = 1
+                #sentiments[(temp[i],temp[j])] = articles[inds[k]]['sentiment']
+            if temp[i] in nodes:
+              nodes[temp[i]]['size']+=1
+              nodes[temp[i]]['articles'].append(process_article(a,ind))
             else:
-              edges[(temp[i],temp[j])] = 1
-              #sentiments[(temp[i],temp[j])] = articles[inds[k]]['sentiment']
-          if temp[i] in nodes:
-            nodes[temp[i]]['size']+=1
-            nodes[temp[i]]['articles'].append(process_article(a))
-          else:
-            nodes[temp[i]] = {'id':temp[i],'label':temp[i],'size':1,'articles':[process_article(a,ind)]}
+              nodes[temp[i]] = {'id':temp[i],'label':temp[i],'size':1,'articles':[process_article(a,ind)]}
   
   ### output json ###
   output = {} #beware of duplicate name
