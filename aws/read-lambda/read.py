@@ -1,6 +1,7 @@
 import json
 from elasticsearch import Elasticsearch,RequestsHttpConnection,helpers
 import ast
+import certifi
 
 BONSAI_URL = 'https://ezq74z6t3a:gc0wwgwdvp@news-visualizer-2976423464.us-east-1.bonsaisearch.net'
 ITEMS_PER_DOC = 4

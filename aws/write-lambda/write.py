@@ -280,11 +280,12 @@ def write(event,context,es=es,load_from=load_from,save_to=save_to):
     for j in range(ITEMS_PER_DOC):
       if 'keywords_'+str(j) in article:
         keywords = literal_eval(article['keywords_'+str(j)])
-        for i,kw in keywords:
+        for i in range(len(keywords)-1,-1,-1):
+          kw = keywords[i]
           if kw in needs_updating:
-            article['keywords'][i] = needs_updating[kw]
+            keywords[i] = needs_updating[kw]
           if kw not in term_to_ind:
-            del article['keywords'][i]
+            del keywords[i]
         article['keywords_'+str(j)] = str(keywords)
     updated_articles.append(article)
   
