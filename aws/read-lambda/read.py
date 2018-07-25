@@ -18,14 +18,14 @@ def connectES(esEndPoint):
 es = connectES(BONSAI_URL)
 
 def read(event,context,es=es):  
-  event['q'] = event['q'].lower()
+  query_str = json.loads(event['body'])['q'].lower()
   should_match  = []
   for i in range(ITEMS_PER_DOC):
     for j in ['description','title']:
       should_match.append({
         'match': {
             j+'_'+str(i): {
-              'query':event['q'],
+              'query':query_str,
               '_name':str(i)
             }
         }
